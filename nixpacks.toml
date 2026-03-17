@@ -7,8 +7,5 @@
 [phases.build]
     dependsOn = ['setup']
     cmds = [
-        'composer install --no-dev --optimize-autoloader --no-interaction',
-        'php artisan flux:publish',
-        'npm install',
-        'npm run build'
+        'composer install --no-dev --optimize-autoloader --no-interaction && npm install && npm run build'
     ]
