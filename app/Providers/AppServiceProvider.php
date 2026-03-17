@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,15 +22,23 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
-    {
-        $this->configureDefaults();
+   // public function boot()
+    //{
+      //  $this->configureDefaults();
         // Solo forzar HTTPS si no estamos en entorno local
    // if (app()->environment('production')) {
      //   URL::forceScheme('https');
   //  }
-    }
+    //}
+public function boot()
+    {
+        $this->configureDefaults();
 
+        // Registrar el namespace para las páginas
+        if (is_dir(resource_path('views/pages'))) {
+            View::addNamespace('pages', resource_path('views/pages'));
+        }
+    }
     /**
      * Configure default behaviors for production-ready applications.
      */
