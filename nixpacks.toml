@@ -8,6 +8,8 @@
     dependsOn = ['setup']
     cmds = [
         'composer install --no-dev --optimize-autoloader --no-interaction',
+        'php artisan flux:publish --assets',
         'npm install',
         'npm run build'
+        # Quitamos view:cache de aquí por ahora para que no trabe el deploy
     ]

@@ -9,6 +9,8 @@
     ],
     "license": "MIT",
    "require": {
+    
+    
     "php": "^8.2",
     "laravel/fortify": "^1.30",
     "laravel/framework": "^11.0", 
