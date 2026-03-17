@@ -1,8 +1,6 @@
 [variables]
     NIXPACKS_PHP_V = '8.3'
-    # Evitamos que Laravel intente usar carpetas que no existen durante el build
-    APP_SERVICES_CACHE = '/tmp/services.php'
-    APP_PACKAGES_CACHE = '/tmp/packages.php'
+    APP_ENV = 'production'
 
 [phases.setup]
     nixPkgs = ['...', 'php83', 'php83Packages.composer', 'nodejs_20']
@@ -10,14 +8,17 @@
 [phases.build]
     dependsOn = ['setup']
     cmds = [
-        # 1. Crear carpetas de storage ANTES de cualquier comando de PHP
+        # 1. Creamos las carpetas de storage ANTES de tocar PHP
         'mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache',
-        'chmod -R 777 storage bootstrap/cache',
-        # 2. Instalar dependencias SIN ejecutar scripts automáticos (esto evita el error del cache path)
+        'chmod -R 775 storage bootstrap/cache',
+        
+        # 2. Instalamos SIN ejecutar scripts (esto evita el error del cache path)
         'composer install --no-dev --no-scripts --optimize-autoloader',
-        # 3. Ahora que vendor existe, registramos los paquetes manualmente
+        
+        # 3. Ahora que vendor existe y hay carpetas, registramos paquetes
         'php artisan package:discover --ansi',
-        # 4. Compilar assets
+        
+        # 4. Construimos el frontend
         'npm install && npm run build'
     ]
 
