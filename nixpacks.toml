@@ -1,16 +1,25 @@
 [variables]
     NIXPACKS_PHP_V = '8.3'
+    # Esta variable ayuda a que Laravel no se queje de la cache durante el build
+    APP_CONFIG_CACHE = '/tmp/config.php'
+    APP_ROUTES_CACHE = '/tmp/routes.php'
+
+[phases.setup]
+    nixPkgs = ['...', 'php83', 'php83Packages.composer', 'nodejs_20']
 
 [phases.build]
     dependsOn = ['setup']
     cmds = [
-        'composer install --no-dev --optimize-autoloader --no-interaction',
-        'npm install',
-        'npm run build'
+        # 1. Creamos las carpetas necesarias manualmente
+        'mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache',
+        # 2. Instalamos sin ejecutar los scripts de Laravel todavía (para evitar el error de cache path)
+        'composer install --no-dev --no-scripts --optimize-autoloader',
+        # 3. Ahora que tenemos vendor, ejecutamos los scripts manualmente
+        'php artisan package:discover --ansi',
+        'npm install && npm run build'
     ]
 
 [phases.start]
-    # Ejecutamos las migraciones y el servidor sin forzar caches de build
     cmds = [
         'php artisan migrate --force',
         'php artisan serve --host 0.0.0.0 --port $PORT'
